@@ -2,7 +2,7 @@ import random
 from enum import StrEnum, auto
 
 
-class ValidMove(StrEnum):
+class Move(StrEnum):
     ROCK = auto()
     PAPER = auto()
     SCISSORS = auto()
@@ -14,36 +14,50 @@ class Outcome(StrEnum):
     DRAW = auto()
 
 
-class RPS:
-    def get_move(self) -> ValidMove:
-        return random.choice(list(ValidMove))
+RULES = {
+    Move.ROCK: {
+        Move.ROCK: Outcome.DRAW,
+        Move.PAPER: Outcome.LOSS,
+        Move.SCISSORS: Outcome.WIN,
+    },
+    Move.PAPER: {
+        Move.ROCK: Outcome.WIN,
+        Move.PAPER: Outcome.DRAW,
+        Move.SCISSORS: Outcome.LOSS,
+    },
+    Move.SCISSORS: {
+        Move.ROCK: Outcome.LOSS,
+        Move.PAPER: Outcome.WIN,
+        Move.SCISSORS: Outcome.DRAW,
+    },
+}
 
-    def get_user_move(self) -> ValidMove:
+
+class RPS:
+    def __init__(
+        self,
+        rules: dict[Move, dict[Move, Outcome]] = RULES,
+    ) -> None:
+        self.rules = rules
+
+    def get_move(self) -> Move:
+        return random.choice(list(Move))
+
+    def get_user_move(self) -> Move:
         while (
             (move := input("Your move: ").lower())
-            not in list(ValidMove)
+            not in list(Move)
         ):
             print("Choose a valid move. Rock, paper or scissors")
-        return ValidMove(move)
+        return Move(move)
 
     def determine_win(
         self,
-        first: ValidMove,
-        second: ValidMove
+        first: Move,
+        second: Move,
     ) -> Outcome:
-        if first == second:
-            return Outcome.DRAW
-        elif (
-            (first == ValidMove.ROCK and second == ValidMove.SCISSORS)
-            or 
-            (first == ValidMove.SCISSORS and second == ValidMove.PAPER)
-            or
-            (first == ValidMove.PAPER and second == ValidMove.ROCK)
-        ):
-            return Outcome.WIN
-        else:
-            return Outcome.LOSS
-    
+        return self.rules[first][second]
+
     def run(self) -> None:
         computer_move = self.get_move()
         user_move = self.get_user_move()
