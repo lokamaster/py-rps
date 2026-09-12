@@ -1,4 +1,5 @@
 import random
+import time
 from enum import StrEnum, auto
 
 
@@ -59,15 +60,38 @@ class RPS:
         return self.rules[first][second]
 
     def run(self) -> None:
-        computer_move = self.get_move()
-        user_move = self.get_user_move()
-        outcome = self.determine_win(user_move, computer_move)
-        if outcome == Outcome.WIN:
-            print("You win!!")
-        elif outcome == Outcome.LOSS:
-            print("You lose")
-        elif outcome == Outcome.DRAW:
-            print("Draw!")
+        FIRST_TO = 3
+
+        print("Welcome to Rock-Paper-Scissors")
+        print("-"*20)
+        print(f"Let's play first to {FIRST_TO}")
+        print()
+        win = 0
+        loss = 0
+        round_no = 0
+        while max(win, loss) < FIRST_TO:
+            round_no += 1
+            print(f"Round number {round_no}")
+            print(f"Current score {win} - {loss}")
+            computer_move = self.get_move()
+            user_move = self.get_user_move()
+            outcome = self.determine_win(user_move, computer_move)
+            if outcome == Outcome.WIN:
+                win += 1
+                print("You win!!")
+            elif outcome == Outcome.LOSS:
+                loss += 1
+                print("You lose")
+            elif outcome == Outcome.DRAW:
+                print("Draw!")
+            print()
+
+        print("Game concluded")
+        print(f"Result: {win} - {loss}")
+        if win > loss:
+            print("You won it all!!")
+        else:
+            print("You lost :( Better luck next time!")
 
 
 def main():
