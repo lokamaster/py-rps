@@ -1,6 +1,7 @@
 import random
-import time
 from enum import StrEnum, auto
+
+from app import art
 
 
 class Move(StrEnum):
@@ -33,20 +34,28 @@ RULES = {
     },
 }
 
+ART = {
+    Move.ROCK: art.ROCK,
+    Move.PAPER: art.PAPER,
+    Move.SCISSORS: art.SCISSORS,
+}
+
 
 class RPS:
     def __init__(
         self,
         rules: dict[Move, dict[Move, Outcome]] = RULES,
+        art: dict[Move, str] = ART,
     ) -> None:
         self.rules = rules
+        self.art = art
 
     def get_move(self) -> Move:
         return random.choice(list(Move))
 
     def get_user_move(self) -> Move:
         while (
-            (move := input("Your move: ").lower())
+            (move := input("Your move: ").lower().strip())
             not in list(Move)
         ):
             print("Choose a valid move. Rock, paper or scissors")
@@ -60,22 +69,40 @@ class RPS:
         return self.rules[first][second]
 
     def run(self) -> None:
-        FIRST_TO = 3
+        # Game constants
+        first_to = 3
 
+        # Print welcome text
+        print(art.LOGO)
         print("Welcome to Rock-Paper-Scissors")
         print("-"*20)
-        print(f"Let's play first to {FIRST_TO}")
+        print(f"Let's play first to {first_to}")
         print()
+
+        # Main gameplay loop
         win = 0
         loss = 0
         round_no = 0
-        while max(win, loss) < FIRST_TO:
+        while max(win, loss) < first_to:
             round_no += 1
             print(f"Round number {round_no}")
             print(f"Current score {win} - {loss}")
+            print()
+
+            # Get moves
             computer_move = self.get_move()
             user_move = self.get_user_move()
             outcome = self.determine_win(user_move, computer_move)
+
+            # Print result to terminal
+            print("="*20)
+            print("Your pick")
+            print(user_move.capitalize())
+            print(self.art[user_move])
+            print("Computer picks")
+            print(computer_move.capitalize())
+            print(self.art[computer_move])
+            print("="*20)
             if outcome == Outcome.WIN:
                 win += 1
                 print("You win!!")
