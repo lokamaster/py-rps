@@ -53,7 +53,7 @@ CLEAR_SCREEN = "\x1b[2J"
 
 class Terminal:
     def __enter__(self):
-        # Change to alt buffer and hide curso
+        # Change to alt buffer and hide cursor
         sys.stdout.write(ALT_BUFFER_ON + CLEAR_SCREEN + CURSOR_HIDE)
         sys.stdout.flush()
         return self
@@ -95,78 +95,93 @@ class RPS:
     ) -> Outcome:
         return self.rules[first][second]
 
-    def run(self) -> None:
-        # Game constants
-        first_to = 3
-
-        welcome = (
+    def _build_welcome(self, first_to: int) -> str:
+        return (
             art.LOGO + "\n"
             +"Welcome to Rock-Paper-Scissors\n"
             + "-"*20 + "\n"
             + f"Let's play first to {first_to}\n"
         )
 
+    def _build_round_info(
+        self,
+        round_no: int,
+        win: int,
+        loss: int
+    ) -> str:
+        return (
+            f"Round number {round_no}\n"
+            + f"Current score {win} - {loss}\n"
+        )
+
+    def _build_result(
+        self,
+        user: Move,
+        computer: Move,
+        outcome: Outcome
+    ) -> str:
+        result = (
+            "="*20 + "\n"
+            + "Your pick\n"
+            + user.capitalize() + "\n"
+            + self.art[user] + "\n"
+            + "Computer picks\n"
+            + computer.capitalize() + "\n"
+            + self.art[computer] + "\n"
+            + "="*20 + "\n"
+        )
+        if outcome == Outcome.WIN:
+            result += "You win!!\n"
+        elif outcome == Outcome.LOSS:
+            result += "You lose\n"
+        elif outcome == Outcome.DRAW:
+            result += "Draw!\n"
+        return result
+    
+    def _build_end(self, win: int, loss: int) -> str:
+        end_result = (
+            "Game concluded\n"
+            + f"Result {win} - {loss}\n"
+        )
+        if win > loss:
+            end_result += "You won it all!!\n"
+        else:
+            end_result += "You lost :( Better luck next time!\n"
+        return end_result
+
+    def run(self) -> None:
+        # Game constants
+        first_to = 3
+
+        welcome = self._build_welcome(first_to)
+        result = ""
+
         win = 0
         loss = 0
         round_no = 0
-        result = ""
         # Main gameplay loop
         with Terminal() as app:
             while max(win, loss) < first_to:
                 round_no += 1
-                round_info = (
-                    f"Round number {round_no}\n"
-                    + f"Current score {win} - {loss}\n"
-                )
-                app.draw(
-                    welcome
-                    + result
-                    + round_info
-                )
+                round_info = self._build_round_info(round_no, win, loss)
+                app.draw(welcome + result + round_info)
 
                 # Get moves
-                computer_move = self.get_move()
-                user_move = self.get_user_move()
-                outcome = self.determine_win(user_move, computer_move)
+                computer = self.get_move()
+                user = self.get_user_move()
+                outcome = self.determine_win(user, computer)
 
-                # Print result to terminal
-                result = (
-                    "="*20 + "\n"
-                    + "Your pick\n"
-                    + user_move.capitalize() + "\n"
-                    + self.art[user_move] + "\n"
-                    + "Computer picks\n"
-                    + computer_move.capitalize() + "\n"
-                    + self.art[computer_move] + "\n"
-                    + "="*20 + "\n"
-                )
+                # Update score
                 if outcome == Outcome.WIN:
                     win += 1
-                    result += "You win!!\n"
                 elif outcome == Outcome.LOSS:
                     loss += 1
-                    result += "You lose\n"
-                elif outcome == Outcome.DRAW:
-                    result += "Draw!\n"
 
-                app.draw(
-                    welcome
-                    + result
-                )
+                result = self._build_result(user, computer, outcome)
+                app.draw(welcome + result)
 
-            end_result = (
-                "Game concluded\n"
-                + f"Result {win} - {loss}\n"
-            )
-            if win > loss:
-                end_result += "You won it all!!\n"
-            else:
-                end_result += "You lost :( Better luck next time!\n"
-            app.draw(
-                welcome
-                + result
-                + end_result
-            )
+            end_result = self._build_end(win, loss)
+            app.draw(welcome + result + end_result)
             input("press ENTER to quit")
 
 
