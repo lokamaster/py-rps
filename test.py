@@ -30,7 +30,7 @@ class TestCode(unittest.TestCase):
         expected = "win"
 
         actual = app.determine_win(first, second)
-        
+
         self.assertEqual(expected, actual)
 
     def test_outcome_lossn(self):
@@ -40,7 +40,7 @@ class TestCode(unittest.TestCase):
         expected = "loss"
 
         actual = app.determine_win(first, second)
-        
+
         self.assertEqual(expected, actual)
 
     def test_outcome_draw(self):
@@ -50,5 +50,5 @@ class TestCode(unittest.TestCase):
         expected = "draw"
 
         actual = app.determine_win(first, second)
-        
+
         self.assertEqual(expected, actual)

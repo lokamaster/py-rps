@@ -1,3 +1,8 @@
+"""RPS terminal game.
+
+Standard game of RPS, played in terminal in best to N fashion.
+"""
+
 import random
 import sys
 from enum import StrEnum, auto
@@ -81,9 +86,8 @@ class RPS:
         return random.choice(list(Move))
 
     def get_user_move(self) -> Move:
-        while (
-            (move := input("Your move: ").lower().strip())
-            not in list(Move)
+        while (move := input("Your move: ").lower().strip()) not in list(
+            Move
         ):
             print("Choose a valid move. Rock, paper or scissors")
         return Move(move)
@@ -97,17 +101,18 @@ class RPS:
 
     def _build_welcome(self, first_to: int) -> str:
         return (
-            art.LOGO + "\n"
-            +"Welcome to Rock-Paper-Scissors\n"
-            + "-"*20 + "\n"
+            art.LOGO
+            + "\n"
+            + "Welcome to Rock-Paper-Scissors\n"
+            + "-" * 30
+            + "\n"
             + f"Let's play first to {first_to}\n"
+            + "-" * 30
+            + "\n"
         )
 
     def _build_round_info(
-        self,
-        round_no: int,
-        win: int,
-        loss: int
+        self, round_no: int, win: int, loss: int
     ) -> str:
         return (
             f"Round number {round_no}\n"
@@ -115,34 +120,31 @@ class RPS:
         )
 
     def _build_result(
-        self,
-        user: Move,
-        computer: Move,
-        outcome: Outcome
+        self, user: Move, computer: Move, outcome: Outcome
     ) -> str:
         result = (
-            "="*20 + "\n"
-            + "Your pick\n"
-            + user.capitalize() + "\n"
-            + self.art[user] + "\n"
-            + "Computer picks\n"
-            + computer.capitalize() + "\n"
-            + self.art[computer] + "\n"
-            + "="*20 + "\n"
+            "You pick "
+            + user
+            + "\n"
+            + self.art[user]
+            + "\n"
+            + "Computer picks "
+            + computer
+            + "\n"
+            + self.art[computer]
+            + "\n"
         )
         if outcome == Outcome.WIN:
-            result += "You win!!\n"
+            result += "You win!!"
         elif outcome == Outcome.LOSS:
-            result += "You lose\n"
+            result += "You lose"
         elif outcome == Outcome.DRAW:
-            result += "Draw!\n"
+            result += "Draw"
+        result += "\n" + "-" * 30 + "\n"
         return result
-    
+
     def _build_end(self, win: int, loss: int) -> str:
-        end_result = (
-            "Game concluded\n"
-            + f"Result {win} - {loss}\n"
-        )
+        end_result = "Game concluded\n" + f"Result {win} - {loss}\n"
         if win > loss:
             end_result += "You won it all!!\n"
         else:
