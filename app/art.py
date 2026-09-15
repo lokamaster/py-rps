@@ -1,4 +1,4 @@
-"""Module to store ASCII-art related to RPS"""
+"""Module to store ASCII-art related to RPS."""
 
 LOGO_LARGE = r"""
 RRRRRRRRR    PPPPPPPP      SSSSSSSS
