@@ -108,11 +108,8 @@ class RPS:
         else:
             end_result += "You lost :( Better luck next time!\n"
         return end_result
-
-    def run(self) -> None:
-        # Game constants
-        first_to = 3
-
+    
+    def run(self, first_to: int = 3) -> None:
         welcome = self._build_welcome(first_to)
         result = ""
 
